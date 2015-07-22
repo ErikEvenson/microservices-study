@@ -1,10 +1,7 @@
 FROM ubuntu:12.04
-MAINTAINER Sean Matthews
+MAINTAINER Erik Evenson (erik.e.evenson@gmail.com)
 
-# This is not 'best practice' from what I read, but this is the 
-# most readable, and simplest, implementation I found for my example.
-RUN apt-get update
-RUN apt-get install -y python-software-properties python
+RUN apt-get update -y && apt-get install -y python-software-properties python
 RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y nodejs
