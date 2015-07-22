@@ -7,7 +7,7 @@ TBD
 Make sure you have Vagrant and Docker installed. Then, start everything with:
 
 ```bash
-vagrant up --provider="docker"
+vagrant up
 ```
 
 You can check that your server is running with:

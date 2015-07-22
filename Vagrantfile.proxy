@@ -1,10 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Inspired by
+# https://github.com/mitchellh/vagrant/blob/master/plugins/providers/docker/hostmachine/Vagrantfile
+
+# Configuration settings
+VAGRANT_VERSION_REQUIRE = ">= 1.7.4"
 VAGRANTFILE_API_VERSION = "2"
+VM_BOX                  = "mitchellh/boot2docker"
+VM_BOX_VERSION          = "1.2.0"
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|  
-  config.vm.box = "hashicorp/precise64"
-  config.vm.provision "docker"
-  config.vm.provision "shell", inline:
-    "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+# Lock down vagrant version.
+Vagrant.require_version VAGRANT_VERSION_REQUIRE
 
-  config.vm.network :forwarded_port, guest: 8888, host: 8888
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  if Vagrant.has_plugin?("vagrant-cachier")
+    # Configure cached packages to be shared between instances of the same base box.
+    # More info on the "Usage" link above
+    config.cache.scope = :box
+  end
+
+  config.vm.box              = VM_BOX
+  config.vm.box_version      = VM_BOX_VERSION
+  config.vm.box_check_update = true
+
+  config.vm.provider "virtualbox" do |v|
+    # On VirtualBox, we don't have guest additions or a functional vboxsf
+    # in TinyCore Linux, so tell Vagrant that so it can be smarter.
+    v.check_guest_additions = false
+    v.functional_vboxsf     = false
+  end
+
+  # b2d doesn't support NFS
+  config.nfs.functional = false
+
+  config.vm.network "forwarded_port",
+    guest: 8888, host: 8888
+
 end
